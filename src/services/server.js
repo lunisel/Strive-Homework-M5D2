@@ -1,14 +1,14 @@
 import express from "express"; // NEW SYNTAX (add "type": "module" to package.json to enable this )
 import cors from "cors";
 import listEndpoints from "express-list-endpoints";
-import studentsRouter from "./services/students/index.js.js";
-import booksRouter from "./services/books/index.js.js";
+import authorRouter from "./services/authors/index.js.js";
+import blogsRouter from "./services/books/index.js.js";
 import {
   notFoundErrorHandler,
   forbiddenErrorHandler,
   badRequestErrorHandler,
   genericServerErrorHandler,
-} from "./errorHandlers.js.js";
+} from "./errorHandlers.js";
 
 const server = express();
 
@@ -30,8 +30,8 @@ server.use(express.json()); // If I do not specify this line of code BEFORE the 
 
 // *************** ROUTES *****************
 
-server.use("/students", studentsRouter);
-server.use("/books", booksRouter);
+server.use("/author", authorRouter);
+server.use("/blogs", blogsRouter);
 
 // **************** ERROR MIDDLEWARES *******************
 

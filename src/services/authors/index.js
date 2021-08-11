@@ -1,12 +1,9 @@
 import express from "express";
-
-import fs from "fs";
-
-import uniqid from "uniqid";
-
-import path, { dirname } from "path";
-
 import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import fs from "fs";
+import uniqid from "uniqid";
+import createHttpError from "http-errors";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -14,17 +11,15 @@ const __dirname = dirname(__filename);
 
 const authorsFilePath = path.join(__dirname, "authors.json");
 
-const router = express.Router();
+const authorRouter = express.Router();
 
 // get all authors
-router.get("/", async (req, res, next) => {
+authorRouter.get("/", async (req, res, next) => {
   try {
-    const fileAsBuffer = fs.readFileSync(authorsFilePath);
-    const fileAsString = fileAsBuffer.toString();
-    const fileAsJSON = JSON.parse(fileAsString);
-    res.send(fileAsJSON);
+    const fileContent = fs.readFileSync(authorsFilePath);
+    res.send(JSON.parse(fileContent));
   } catch (error) {
-    res.send(500).send({ message: error.message });
+    next(error);
   }
 });
 
@@ -56,7 +51,7 @@ router.post("/", async (req, res, next) => {
 
     res.send(author);
   } catch (error) {
-    res.send(500).send({ message: error.message });
+    next(error);
   }
 });
 
@@ -79,7 +74,7 @@ router.get("/:id", async (req, res, next) => {
     }
     res.send(author);
   } catch (error) {
-    res.send(500).send({ message: error.message });
+    next(error);
   }
 });
 
@@ -106,7 +101,7 @@ router.delete("/:id", async (req, res, next) => {
     fs.writeFileSync(authorsFilePath, JSON.stringify(fileAsJSONArray));
     res.status(204).send();
   } catch (error) {
-    res.send(500).send({ message: error.message });
+    next(error);
   }
 });
 
@@ -139,7 +134,7 @@ router.put("/:id", async (req, res, next) => {
     fs.writeFileSync(authorsFilePath, JSON.stringify(fileAsJSONArray));
     res.send(changedAuthor);
   } catch (error) {
-    res.send(500).send({ message: error.message });
+    next(error);
   }
 });
 
